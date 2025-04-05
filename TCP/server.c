@@ -46,6 +46,6 @@ int main(void)
         printf("Cant accept\n");
         return -1;
     }
-    printf("Client Connected to port %i\n",ntohs(client_addr.sin_port));
+    printf("Client Connected at IP:%s port %i\n",inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
     return 0;
 }
