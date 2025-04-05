@@ -30,5 +30,23 @@ int main(void)
         return -1;
     }
     printf("Connected with server successfully\n");
+
+    printf("Enter the message to server:");
+    fgets(client_message,sizeof(client_message),stdin);
+
+    if(send(sockdesc,client_message,sizeof(client_message),0)<0)
+    {
+        printf("Error while sending message\n");
+        return -1;
+    }
+    
+    if(recv(sockdesc,server_message,sizeof(server_message),0)<0)
+    {
+        printf("Can't recevie server's Message");
+        return -1;
+    }
+    printf("Message from server is %s",server_message);
+
+    close(sockdesc);
     return 0;
 }

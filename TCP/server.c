@@ -47,5 +47,24 @@ int main(void)
         return -1;
     }
     printf("Client Connected at IP:%s port %i\n",inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
+
+    if(recv(client_sock,client_message,sizeof(client_message),0)<0)
+    {
+        printf("Can't recevie server's Message\n");
+        return -1;
+    }
+    printf("Message from client is %s",client_message);
+
+    printf("Enter the message to client:");
+    fgets(server_message,sizeof(server_message),stdin);
+
+    if(send(client_sock,server_message,sizeof(server_message),0)<0)
+    {
+        printf("Error while sending message\n");
+        return -1;
+    }
+
+    close(client_sock);
+    close(sockdesc);
     return 0;
 }
