@@ -34,7 +34,7 @@ int main(void)
     printf("Enter the message to server:");
     fgets(client_message,sizeof(client_message),stdin);
 
-    if(send(sockdesc,client_message,sizeof(client_message),0)<0)
+    if(send(sockdesc,client_message,strlen(client_message),0)<0)
     {
         printf("Error while sending message\n");
         return -1;
