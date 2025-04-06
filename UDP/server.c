@@ -27,7 +27,7 @@ int main(void)
 
     if(bind(sockdesc,(struct sockaddr*)&server_addr,sizeof(server_addr))<0)
     {
-        printf("Can't bind\n");
+        printf("Can't bind to the port");
         return -1;
     }
     printf("Done with binding\nListen for the message......\n");

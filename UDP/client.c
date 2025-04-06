@@ -15,7 +15,7 @@ int main(void)
     sockdesc = socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
     if(sockdesc < 0)
     {
-        printf("Cant Create socket in client side\n");
+        printf("Can't Create socket in client side\n");
         return -1;
     }
     printf("Socket Created successfully\n");
