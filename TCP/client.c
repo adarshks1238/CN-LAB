@@ -15,7 +15,7 @@ int main(void)
     sockdesc = socket(AF_INET,SOCK_STREAM,0);
     if(sockdesc < 0)
     {
-        printf("Can't Create Socket\n");
+        printf("Can't Create Socket in client side\n");
         return -1;
     }
     printf("Socket Created Successfully\n");

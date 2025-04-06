@@ -16,7 +16,7 @@ int main(void)
     sockdesc = socket(AF_INET,SOCK_STREAM,0);
     if(sockdesc<0)
     {
-        printf("Error to create socket\n");
+        printf("can't create socket in server side\n");
         return -1;
     }
     printf("Socket Created Successfully... \n");
@@ -43,7 +43,7 @@ int main(void)
     client_sock = accept(sockdesc ,(struct sockaddr*)&client_addr,&clientsize);
     if(client_sock < 0)
     {
-        printf("Cant accept\n");
+        printf("Can't accept\n");
         return -1;
     }
     printf("Client Connected at IP:%s port %i\n",inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
