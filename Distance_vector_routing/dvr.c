@@ -51,7 +51,7 @@ int main()
         printf("\nROUTING TABLE for %dst router\n",i+1);
         for(j=0;j<n;j++)
         {
-            printf("node %d from %d -> Distance is %d\n",j+1,rt[i].from[j]+1,rt[i].dist[j]);
+            printf("node %d via %d -> Distance is %d\n",j+1,rt[i].from[j]+1,rt[i].dist[j]);
         }
     }
     printf("\n\n");
