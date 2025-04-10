@@ -10,27 +10,67 @@
 #include<sys/time.h>
 struct timeval timeout;
 
-void serfun(int sockdesc,int frame,int window)
-{
-    timeout.tv_sec = 3;
-    timeout.tv_usec = 0;
-
-    char buffer[50];
-    int ack,ws=0,we=window-1,i,j,n,k;
-    if( setsockopt(sockdesc, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout))<0)
+    void serfun(int sockfd, int nf, int ws)
     {
-        perror("setsokopt failed");
+        timeout.tv_sec = 3;
+        timeout.tv_usec = 0;
+        char buff[80];
+        int ack, i = 0, n, k, w1 = 0, w2 = ws - 1, j, flag = 0;
+        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char *)&timeout, sizeof(timeout)) < 0)
+            perror("setsockopt(SO_RCVTIMEO) failed");
+    
+        for (i = 0; i < nf && i <= w2; i++)
+        {
+            bzero(buff, sizeof(buff));
+            snprintf(buff, sizeof(buff), "%d", i);
+            k = send(sockfd, buff, sizeof(buff), 0);
+            printf("Frame %d sent\n", i);
+        }
+        while (1)
+        {
+            if (w2 - w1 != ws - 1 && flag == 0 && i != nf)
+            {
+                bzero(buff, sizeof(buff));
+                snprintf(buff, sizeof(buff), "%d", i);
+                k = send(sockfd, buff, sizeof(buff), 0);
+                printf("Frame %d sent\n", i);
+                w2++;
+                i++;
+            }
+            flag = 0;
+            bzero(buff, sizeof(buff));
+            n = recv(sockfd, buff, 80, 0);
+            ack = atoi(buff);
+            if (n > 0)
+            {
+                if (ack + 1 == nf)
+                {
+                    printf("Acknowlegement received: %d\nExit\n", ack);
+                    bzero(buff, sizeof(buff));
+                    strcpy(buff, "Exit");
+                    k = send(sockfd, buff, sizeof(buff), 0);
+                    break;
+                }
+                if (ack == w1)
+                {
+                    w1++;
+                    printf("Acknowlegement received: %d\n", ack);
+                }
+            }
+            else
+            {
+                printf("Acknowledgement not received for %d\nResending frames\n", w1);
+                for (j = w1; j < nf && j < w1 + ws; j++)
+                {
+                    bzero(buff, sizeof(buff));
+                    snprintf(buff, sizeof(buff), "%d", j);
+                    k = send(sockfd, buff, sizeof(buff), 0);
+                    printf("Frame %d sent\n", j);
+                }
+                flag = 1;
+            }
+        }
     }
-
-    for(i=0; i<frame && i<we;i++)
-    {
-        bzero(buffer,sizeof(buffer));
-        snprintf(buffer,sizeof(buffer),"%d",i);
-        k = send(sockdesc,buffer,sizeof(buffer),0);
-        printf("\nframe %d send",i);
-    }
-}
-
 int main(void)
 {
     int sockdesc;

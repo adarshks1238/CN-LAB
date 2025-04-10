@@ -6,53 +6,50 @@
 #include<stdlib.h>
 #include<netinet/in.h>
 #include<netdb.h>
-void serfun(int clientsock)
+void serfun(int connfd)
 {
-    char buffer[50];
-
-    int f,c,ack,next = 0;
-    while(1)
+    char buff[80];
+    int f, c, ack, next = 0;
+    while (1)
     {
         sleep(1);
-        bzero(buffer,50);
-        recv(clientsock,buffer,50,0);
-        if(strcmp("Exit",buffer)==0)
+        bzero(buff, 80);
+        recv(connfd, buff, 80, 0);
+        if (strcmp("Exit", buff) == 0)
         {
             printf("Exit\n");
             break;
         }
-        f = atoi(buffer);
-
-        if (f!=next)
+        f = atoi(buff);
+        if (f != next)
         {
-            printf("frame discard: %d\n",f);
-            printf("Acknowledgment sent : %d",ack);
-            bzero(buffer,50);
-            snprintf(buffer,sizeof(buffer),"%d",ack);
-            send(clientsock,buffer,sizeof(buffer),0);
+            printf("Frame %d discarded\nAcknowledgement sent: %d\n", f, ack);
+            bzero(buff, 80);
+            snprintf(buff, sizeof(buff), "%d", ack);
+            send(connfd, buff, sizeof(buff), 0);
             continue;
         }
-        c=rand() % 3;
-        switch(c)
+        c = rand() % 3;
+        switch (c)
         {
+            case 0:
+                break;
             case 1:
-                sleep(2);
                 ack = f;
-                printf("Frame Received %d\n",f);
-                printf("Acknowlegment send %d\n",ack);
-                bzero(buffer,50);
-                snprintf(buffer,sizeof(buffer),"%d",ack);
-                send(clientsock,buffer,sizeof(buffer),0);
-                next = ack+1;
+                sleep(2);
+                printf("Frame %d received\nAcknowledement sent: %d\n", f, ack);
+                bzero(buff, 80);
+                snprintf(buff, sizeof(buff), "%d", ack);
+                send(connfd, buff, sizeof(buff), 0);
+                next = ack + 1;
                 break;
             case 2:
                 ack = f;
-                printf("Frame Received %d\n",f);
-                printf("Acknowlegment send %d\n",ack);
-                bzero(buffer,50);
-                snprintf(buffer,sizeof(buffer),"%d",ack);
-                send(clientsock,buffer,sizeof(buffer),0);
-                next = ack+1;
+                printf("Frame %d received\nAcknowledement sent: %d\n", f, ack);
+                bzero(buff, 80);
+                snprintf(buff, sizeof(buff), "%d", ack);
+                send(connfd, buff, sizeof(buff), 0);
+                next = ack + 1;
                 break;
         }
     }
